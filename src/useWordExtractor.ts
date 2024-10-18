@@ -128,7 +128,7 @@ const useWordExtractor = ({ keywords }: UseWordExtractorProps) => {
     };
   };
 
-  return { extractFromFile, extractedData, error };
+  return { extractFromFile, extractedData, error , setError};
 };
 
 export default useWordExtractor;

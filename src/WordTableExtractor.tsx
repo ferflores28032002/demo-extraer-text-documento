@@ -1,40 +1,51 @@
-"use client"
+"use client";
 
-import { FileText, Upload } from "lucide-react"
-import React, { useState } from "react"
-import useWordExtractor from "./useWordExtractor"
+import { FileText, Upload } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import useWordExtractor from "./useWordExtractor";
 
 const predefinedKeywords = [
-  "CENTROS DE CARGA ",
+  "CENTROS DE CARGA",
   "PRODUCTOS CONTRATADOS",
   "IRECs Contratados / Contracted IRECs",
+  "Potencia Base (MW por año): ",
   "CONTRAPRESTACIÓN",
   "Potencia Base (MW por año) / Base Capacity (MW per year):",
-]
+];
 
 export default function Component() {
-  const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null)
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const { extractFromFile, extractedData, error } = useWordExtractor({
+  const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { extractFromFile, extractedData, error, setError } = useWordExtractor({
     keywords: selectedKeyword ? [selectedKeyword] : [],
-  })
+  });
+
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null); // Reset the error after 1 second
+      }, 1000); // 1 second
+
+      return () => clearTimeout(timer); // Cleanup on unmount or error change
+    }
+  }, [error, setError]);
 
   const handleKeywordSelect = (keyword: string) => {
-    setSelectedKeyword(keyword === selectedKeyword ? null : keyword)
-  }
+    setSelectedKeyword(keyword === selectedKeyword ? null : keyword);
+  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+    const file = event.target.files?.[0];
     if (file) {
-      setSelectedFile(file)
+      setSelectedFile(file);
     }
-  }
+  };
 
   const handleAnalyze = () => {
     if (selectedFile) {
-      extractFromFile(selectedFile)
+      extractFromFile(selectedFile);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4  ">
@@ -52,10 +63,7 @@ export default function Component() {
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {predefinedKeywords.map((keyword) => (
-                  <div
-                    key={keyword}
-                    className="flex items-center space-x-2"
-                  >
+                  <div key={keyword} className="flex items-center space-x-2">
                     <div className="relative">
                       <input
                         type="radio"
@@ -70,7 +78,10 @@ export default function Component() {
                         )}
                       </div>
                     </div>
-                    <label htmlFor={keyword} className="text-gray-700 cursor-pointer">
+                    <label
+                      htmlFor={keyword}
+                      className="text-gray-700 cursor-pointer"
+                    >
                       {keyword}
                     </label>
                   </div>
@@ -114,11 +125,7 @@ export default function Component() {
             </div>
           </div>
 
-          {error && (
-            <p className="text-red-500 mt-4 text-center">
-              {error}
-            </p>
-          )}
+          {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
 
           {extractedData && (
             <div className="mt-8 space-y-6">
@@ -139,5 +146,5 @@ export default function Component() {
         </div>
       </div>
     </div>
-  )
+  );
 }
