@@ -11,9 +11,12 @@ const predefinedKeywords = [
   "Potencia Base (MW por año): ",
   "CONTRAPRESTACIÓN",
   "Potencia Base (MW por año) / Base Capacity (MW per year):",
+  "SLP 1",
+  "SLP 2",
+  "SLP 3",
 ];
 
-export default function Component() {
+export default function WordTableExtractor() {
   const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { extractFromFile, extractedData, error, setError } = useWordExtractor({
@@ -126,6 +129,42 @@ export default function Component() {
           </div>
 
           {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
+
+          {extractedData && extractedData.textAfterTable && (
+            <div className="mt-8 space-y-6">
+              <div>
+                <h3 className="text-2xl font-semibold text-[#e74038] mb-3">
+                  Texto después de la tabla:
+                </h3>
+                <div className="bg-white p-4 rounded-lg shadow-inner">
+                  {extractedData.textAfterTable.map((paragraph, index) => (
+                    <p key={index} className="text-sm text-gray-700 mb-2">
+                      <span className="font-[600]">{index + 1}. </span>
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {extractedData && extractedData.textBeforeTable && (
+            <div className="mt-8 space-y-6">
+              <div>
+                <h3 className="text-2xl font-semibold text-[#e74038] mb-3">
+                  Texto antes de la tabla:
+                </h3>
+                <div className="bg-white p-4 rounded-lg shadow-inner">
+                  {extractedData.textBeforeTable.map((paragraph, index) => (
+                    <p key={index} className="text-sm text-gray-700 mb-2">
+                      <span className="font-[600]">{index + 1}. </span>
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           {extractedData && (
             <div className="mt-8 space-y-6">
